@@ -1044,6 +1044,36 @@
             margin-bottom: 0.5rem;
         }
 
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 3rem;
+            color: #ef4444;
+        }
+
         /* 移动端适配 */
         @media (max-width: 768px) {
             .nav-container {
@@ -1197,7 +1227,9 @@
         <div id="resources" class="page" role="tabpanel" aria-label="资源导航">
             <h1>资源导航</h1>
             <div class="category-tabs" id="resourceTabs"></div>
-            <div class="resource-grid" id="resourceList"></div>
+            <div class="resource-grid" id="resourceList">
+                <div class="loading">加载中</div>
+            </div>
             <div class="pagination" id="resourcePagination"></div>
         </div>
 
@@ -1205,7 +1237,9 @@
         <div id="downloads" class="page" role="tabpanel" aria-label="文件下载">
             <h1>文件下载</h1>
             <div class="category-tabs" id="downloadTabs"></div>
-            <div class="file-list" id="fileList"></div>
+            <div class="file-list" id="fileList">
+                <div class="loading">加载中</div>
+            </div>
             <div class="pagination" id="downloadPagination"></div>
         </div>
 
@@ -1213,7 +1247,9 @@
         <div id="blog" class="page" role="tabpanel" aria-label="博客列表">
             <h1>我的博客</h1>
             <div class="category-tabs" id="blogTabs"></div>
-            <div class="blog-list" id="blogList"></div>
+            <div class="blog-list" id="blogList">
+                <div class="loading">加载中</div>
+            </div>
             <div class="pagination" id="blogPagination"></div>
         </div>
 
@@ -1278,6 +1314,22 @@
     <div class="toast" id="copyToast" role="status" aria-live="polite"></div>
 
     <script>
+        // ==================== GitHub Pages 配置 ====================
+        // 检测是否在 GitHub Pages 项目页面（非用户/组织站点）
+        const isGitHubPagesProject = () => {
+            const { hostname, pathname } = window.location;
+            return hostname.endsWith('github.io') && pathname.split('/').length > 2 && pathname.split('/')[1] !== '';
+        };
+
+        // 获取基础路径
+        const getBasePath = () => {
+            if (isGitHubPagesProject()) {
+                const pathParts = window.location.pathname.split('/');
+                return '/' + pathParts[1] + '/';
+            }
+            return './';
+        };
+
         // ==================== 分页配置 ====================
         const PaginationConfig = {
             resources: { itemsPerPage: 6 },
@@ -1293,19 +1345,29 @@
             resourcePage: 1,
             downloadPage: 1,
             blogPage: 1,
-            data: null
+            data: null,
+            basePath: getBasePath()
         };
 
         // ==================== 核心功能 ====================
         const App = {
             async init() {
                 try {
-                    const response = await fetch('./data.json');
-                    if (!response.ok) throw new Error('Failed to load data');
+                    // 构建 data.json 的完整 URL
+                    const dataUrl = AppState.basePath + 'data.json';
+                    console.log('Loading data from:', dataUrl);
+                    
+                    const response = await fetch(dataUrl);
+                    if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     AppState.data = await response.json();
+                    
+                    // 处理图片路径（如果是 GitHub Pages 项目页面，需要调整图片路径）
+                    this.adjustImagePaths();
+                    
                 } catch (error) {
                     console.error('Failed to load data:', error);
-                    AppState.data = { blogs: [], resources: [], downloads: [], skills: [] };
+                    this.showError('数据加载失败，请刷新页面重试');
+                    return;
                 }
 
                 this.renderResourceTabs();
@@ -1317,6 +1379,48 @@
                 this.renderSkills();
                 this.setupEventListeners();
                 this.handleInitialRoute();
+            },
+
+            // 调整图片路径以适应 GitHub Pages
+            adjustImagePaths() {
+                const adjustPath = (path) => {
+                    if (!path || path.startsWith('http')) return path;
+                    if (path.startsWith('./')) {
+                        return AppState.basePath + path.slice(2);
+                    }
+                    if (path.startsWith('/')) {
+                        return AppState.basePath + path.slice(1);
+                    }
+                    return AppState.basePath + path;
+                };
+
+                // 处理博客封面
+                AppState.data.blogs.forEach(blog => {
+                    if (blog.cover) blog.cover = adjustPath(blog.cover);
+                    // 处理内容中的图片路径
+                    if (blog.content) {
+                        blog.content = blog.content.replace(/src=["'](\.\/[^"']+)["']/g, (match, p1) => {
+                            return `src="${adjustPath(p1)}"`;
+                        });
+                    }
+                });
+
+                // 处理资源图标
+                AppState.data.resources.forEach(resource => {
+                    if (resource.image) resource.image = adjustPath(resource.image);
+                });
+
+                // 处理下载封面
+                AppState.data.downloads.forEach(download => {
+                    if (download.cover) download.cover = adjustPath(download.cover);
+                });
+            },
+
+            showError(message) {
+                const errorHtml = `<div class="error-message">${message}</div>`;
+                document.getElementById('resourceList').innerHTML = errorHtml;
+                document.getElementById('fileList').innerHTML = errorHtml;
+                document.getElementById('blogList').innerHTML = errorHtml;
             },
 
             setupEventListeners() {
@@ -1389,8 +1493,10 @@
                     }
                 }
 
-                const startItem = (currentPage - 1) * PaginationConfig[containerId.replace('Pagination', '')].itemsPerPage + 1;
-                const endItem = Math.min(currentPage * PaginationConfig[containerId.replace('Pagination', '')].itemsPerPage, totalItems);
+                const config = PaginationConfig[containerId.replace('Pagination', '')];
+                const itemsPerPage = config ? config.itemsPerPage : 10;
+                const startItem = (currentPage - 1) * itemsPerPage + 1;
+                const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
                 let html = `<div class="pagination-info">共 ${totalItems} 项，第 ${startItem}-${endItem} 项</div>`;
                 
@@ -1718,7 +1824,7 @@
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => App.init());
+        document.addEventListener('DOMContentListener', () => App.init());
     </script>
 </body>
 </html>
