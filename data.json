@@ -47,18 +47,18 @@
             "cover": "./images/downloads/vpn.jpg",
             "url": "https://github.com/mengyu-awa/mengyu-awa/releases/download/vpn_with_config/vpn.zip"
         },
-                {
-                    id: 3,
-                    name: 'v2rayN',
-                    filename: 'v2rayN-windows-64-desktop.zip',
-                    size: '111 MB',
-                    date: '2026-04-19',
-                    category: '工具',
-                    desc: '适用于Windows的VPN',
-                    icon: '🔒',
-                    cover: './images/downloads/v2rayn.png',
-                    url: 'https://github.com/2dust/v2rayN/releases/download/7.20.4/v2rayN-windows-64-desktop.zip'
-                }
+        {
+            "id": 3,
+            "name": "v2rayN",
+            "filename": "v2rayN-windows-64-desktop.zip",
+            "size": "111 MB",
+            "date": '2026-04-19',
+            "category": "工具",
+            "desc": "适用于Windows的VPN",
+            "icon": "🔒",
+            "cover": "./images/downloads/v2rayn.png",
+            "url": "https://github.com/2dust/v2rayN/releases/download/7.20.4/v2rayN-windows-64-desktop.zip"
+        }
     ],
     "skills": []
 }
