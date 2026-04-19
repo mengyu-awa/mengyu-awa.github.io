@@ -44,7 +44,7 @@
             "category": "工具",
             "desc": "vpn，只能我用",
             "icon": "🔒",
-            "cover": "./images/downloads/vpn.jpg",
+            "cover": "./images/downloads/vpn.png",
             "url": "https://github.com/mengyu-awa/mengyu-awa/releases/download/vpn_with_config/vpn.zip"
         },
         {
