@@ -1314,21 +1314,9 @@
     <div class="toast" id="copyToast" role="status" aria-live="polite"></div>
 
     <script>
-        // ==================== GitHub Pages 配置 ====================
-        // 检测是否在 GitHub Pages 项目页面（非用户/组织站点）
-        const isGitHubPagesProject = () => {
-            const { hostname, pathname } = window.location;
-            return hostname.endsWith('github.io') && pathname.split('/').length > 2 && pathname.split('/')[1] !== '';
-        };
-
-        // 获取基础路径
-        const getBasePath = () => {
-            if (isGitHubPagesProject()) {
-                const pathParts = window.location.pathname.split('/');
-                return '/' + pathParts[1] + '/';
-            }
-            return './';
-        };
+        // ==================== 配置 ====================
+        // 固定数据源地址
+        const DATA_URL = 'https://www.mengyu-awa.top/data.json';
 
         // ==================== 分页配置 ====================
         const PaginationConfig = {
@@ -1345,24 +1333,18 @@
             resourcePage: 1,
             downloadPage: 1,
             blogPage: 1,
-            data: null,
-            basePath: getBasePath()
+            data: null
         };
 
         // ==================== 核心功能 ====================
         const App = {
             async init() {
                 try {
-                    // 构建 data.json 的完整 URL
-                    const dataUrl = AppState.basePath + 'data.json';
-                    console.log('Loading data from:', dataUrl);
+                    console.log('Loading data from:', DATA_URL);
                     
-                    const response = await fetch(dataUrl);
+                    const response = await fetch(DATA_URL);
                     if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     AppState.data = await response.json();
-                    
-                    // 处理图片路径（如果是 GitHub Pages 项目页面，需要调整图片路径）
-                    this.adjustImagePaths();
                     
                 } catch (error) {
                     console.error('Failed to load data:', error);
@@ -1379,41 +1361,6 @@
                 this.renderSkills();
                 this.setupEventListeners();
                 this.handleInitialRoute();
-            },
-
-            // 调整图片路径以适应 GitHub Pages
-            adjustImagePaths() {
-                const adjustPath = (path) => {
-                    if (!path || path.startsWith('http')) return path;
-                    if (path.startsWith('./')) {
-                        return AppState.basePath + path.slice(2);
-                    }
-                    if (path.startsWith('/')) {
-                        return AppState.basePath + path.slice(1);
-                    }
-                    return AppState.basePath + path;
-                };
-
-                // 处理博客封面
-                AppState.data.blogs.forEach(blog => {
-                    if (blog.cover) blog.cover = adjustPath(blog.cover);
-                    // 处理内容中的图片路径
-                    if (blog.content) {
-                        blog.content = blog.content.replace(/src=["'](\.\/[^"']+)["']/g, (match, p1) => {
-                            return `src="${adjustPath(p1)}"`;
-                        });
-                    }
-                });
-
-                // 处理资源图标
-                AppState.data.resources.forEach(resource => {
-                    if (resource.image) resource.image = adjustPath(resource.image);
-                });
-
-                // 处理下载封面
-                AppState.data.downloads.forEach(download => {
-                    if (download.cover) download.cover = adjustPath(download.cover);
-                });
             },
 
             showError(message) {
@@ -1824,7 +1771,7 @@
             }
         };
 
-        document.addEventListener('DOMContentListener', () => App.init());
+        document.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
 </html>
