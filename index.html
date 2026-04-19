@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="梦语の小站 - 记录学习，分享资源，探索技术">
+    <meta property="og:title" content="梦语の小站">
+    <meta property="og:description" content="记录学习，分享资源，探索技术">
+    <meta property="og:type" content="website">
+    <title>我的空间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0a;
+            --surface: #141414;
+            --surface-hover: #1a1a1a;
+            --text: #e5e5e5;
+            --text-muted: #666;
+            --accent: #fff;
+            --border: #222;
+            --success: #4ade80;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            opacity: 0;
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* 导航 */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 5%;
+            z-index: 100;
+            transform: translateY(-100%);
+            animation: slideDown 0.8s ease-out 0.3s forwards;
+        }
+
+        @keyframes slideDown {
+            to { transform: translateY(0); }
+        }
+
+        .nav-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 600;
+            color: var(--accent);
+            text-decoration: none;
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out 0.8s forwards;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .nav-links li:nth-child(1) { animation-delay: 0.9s; }
+        .nav-links li:nth-child(2) { animation-delay: 1s; }
+        .nav-links li:nth-child(3) { animation-delay: 1.1s; }
+        .nav-links li:nth-child(4) { animation-delay: 1.2s; }
+        .nav-links li:nth-child(5) { animation-delay: 1.3s; }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .bilibili-btn {
+            background: #fb7299;
+            color: #fff;
+            padding: 0.4rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            opacity: 0;
+            transform: scale(0.9);
+            animation: popIn 0.5s ease-out 1.4s forwards;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        @keyframes popIn {
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* 页面容器 */
+        .page {
+            display: none;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 100px 5% 60px;
+            min-height: 100vh;
+        }
+
+        .page.active {
+            display: block;
+            animation: pageEnter 0.5s ease-out;
+        }
+
+        @keyframes pageEnter {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* 主页 */
+        .home-intro {
+            padding: 4rem 0;
+            text-align: center;
+            opacity: 0;
+            animation: fadeUp 0.8s ease-out 0.6s forwards;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .avatar-container {
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: scaleIn 0.6s ease-out 0.4s forwards;
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--border);
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 60px rgba(255, 255, 255, 0.15);
+            border-color: #444;
+        }
+
+        .home-intro h1 {
+            font-size: 2.4rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .home-intro p {
+            color: var(--text-muted);
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        .home-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.7rem 1.8rem;
+            border: 1px solid #333;
+            background: transparent;
+            color: var(--text);
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            border-color: #555;
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+            font-weight: 500;
+        }
+
+        .btn-primary:hover {
+            background: #e0e0e0;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-back {
+            margin-bottom: 2rem;
+        }
+
+        /* 分类标签 */
+        .category-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .category-tab {
+            padding: 0.4rem 1rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .category-tab:hover {
+            border-color: #444;
+            color: var(--text);
+        }
+
+        .category-tab.active {
+            background: var(--surface);
+            color: var(--accent);
+            border-color: #444;
+        }
+
+        /* 资源网格 */
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .resource-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s;
+            opacity: 0;
+            animation: slideUp 0.5s ease-out forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: transparent;
+            transition: background 0.3s;
+        }
+
+        .resource-card:hover {
+            border-color: #444;
+            background: var(--surface-hover);
+            transform: translateY(-3px);
+        }
+
+        .resource-card:hover::before {
+            background: #fb7299;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .resource-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            background: #222;
+            transition: transform 0.3s;
+        }
+
+        .resource-card:hover .resource-icon {
+            transform: scale(1.1);
+        }
+
+        .resource-icon-fallback {
+            width: 48px;
+            height: 48px;
+            background: #222;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .resource-name {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.3rem;
+        }
+
+        .resource-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .resource-meta {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .resource-tag {
+            font-size: 0.75rem;
+            color: #555;
+            background: #1a1a1a;
+            padding: 0.2rem 0.6rem;
+            border-radius: 3px;
+        }
+
+        /* 博客列表 */
+        .blog-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .blog-item {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border);
+            opacity: 0;
+            animation: fadeUp 0.6s ease-out forwards;
+            cursor: pointer;
+            transition: padding-left 0.3s;
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .blog-item:nth-child(1) { animation-delay: 0.1s; }
+        .blog-item:nth-child(2) { animation-delay: 0.2s; }
+        .blog-item:nth-child(3) { animation-delay: 0.3s; }
+        .blog-item:nth-child(4) { animation-delay: 0.4s; }
+
+        .blog-item:hover {
+            padding-left: 1rem;
+        }
+
+        .blog-item:last-child {
+            border-bottom: none;
+        }
+
+        .blog-item-cover {
+            width: 120px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .blog-item:hover .blog-item-cover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .blog-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .blog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+            gap: 1rem;
+        }
+
+        .blog-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent);
+            transition: color 0.3s;
+        }
+
+        .blog-item:hover .blog-title {
+            color: #fff;
+        }
+
+        .blog-category {
+            font-size: 0.75rem;
+            color: #555;
+            background: #1a1a1a;
+            padding: 0.2rem 0.6rem;
+            border-radius: 3px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .blog-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .blog-excerpt {
+            color: #888;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* 博文详情页 */
+        .blog-detail {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .blog-detail-header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .blog-detail-cover {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+
+        .blog-detail-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .blog-detail-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .blog-detail-content {
+            font-size: 1.05rem;
+            line-height: 1.9;
+            color: #ccc;
+        }
+
+        .blog-detail-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .blog-detail-content h2 {
+            font-size: 1.4rem;
+            color: var(--accent);
+            margin: 2.5rem 0 1rem;
+            font-weight: 600;
+        }
+
+        .blog-detail-content h3 {
+            font-size: 1.15rem;
+            color: #ddd;
+            margin: 2rem 0 0.8rem;
+            font-weight: 600;
+        }
+
+        .blog-detail-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin: 1.5rem 0;
+            display: block;
+            border: 1px solid var(--border);
+        }
+
+        .blog-detail-content code {
+            background: #1a1a1a;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: #e6e6e6;
+        }
+
+        .blog-detail-content pre {
+            background: #0f0f0f;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border);
+        }
+
+        .blog-detail-content pre code {
+            background: transparent;
+            padding: 0;
+        }
+
+        .blog-detail-content ul, .blog-detail-content ol {
+            margin: 1rem 0 1.5rem 1.5rem;
+        }
+
+        .blog-detail-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .blog-detail-content blockquote {
+            border-left: 3px solid #444;
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            color: #999;
+            font-style: italic;
+        }
+
+        .blog-detail-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .blog-detail-tag {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* 文件下载页面 */
+        .file-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.3s;
+            opacity: 0;
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        .file-item:nth-child(1) { animation-delay: 0.1s; }
+        .file-item:nth-child(2) { animation-delay: 0.2s; }
+        .file-item:nth-child(3) { animation-delay: 0.3s; }
+        .file-item:nth-child(4) { animation-delay: 0.4s; }
+
+        .file-item:hover {
+            border-color: #444;
+            background: var(--surface-hover);
+            transform: translateX(5px);
+        }
+
+        .file-cover {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .file-item:hover .file-cover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .file-icon {
+            width: 56px;
+            height: 56px;
+            background: #1a1a1a;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+        }
+
+        .file-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.3rem;
+            font-size: 1.1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+        }
+
+        .file-desc {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        .file-download {
+            padding: 0.6rem 1.2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+        }
+
+        .file-download:hover {
+            background: var(--accent);
+            color: var(--bg);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .file-download.downloaded {
+            background: var(--success);
+            border-color: var(--success);
+            color: var(--bg);
+        }
+
+        /* 关于页面 */
+        .about-content p {
+            color: #888;
+            margin-bottom: 1rem;
+            line-height: 1.8;
+            opacity: 0;
+            animation: fadeUp 0.6s ease-out 0.2s forwards;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-top: 1.5rem;
+            opacity: 0;
+            animation: fadeUp 0.6s ease-out 0.4s forwards;
+        }
+
+        .skill-tag {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.4rem 1rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #999;
+            transition: all 0.3s;
+        }
+
+        .skill-tag:hover {
+            border-color: #555;
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #444;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: #555;
+            text-decoration: none;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        footer a:hover {
+            color: #888;
+        }
+
+        /* 联系弹窗 */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 
+                        0 0 0 1px rgba(255, 255, 255, 0.05);
+            transform: scale(0.95) translateY(10px);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s;
+            margin: -0.5rem -0.5rem 0 0;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent);
+        }
+
+        .contact-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+
+        .contact-item:hover {
+            border-color: #333;
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateX(4px);
+        }
+
+        .contact-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            flex-shrink: 0;
+            background: #1a1a1a;
+            border: 1px solid var(--border);
+        }
+
+        .contact-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .contact-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.2rem;
+        }
+
+        .contact-value {
+            font-size: 0.95rem;
+            color: var(--text);
+            font-family: 'Consolas', 'Monaco', monospace;
+            word-break: break-all;
+        }
+
+        .contact-copy {
+            padding: 0.4rem 0.8rem;
+            background: transparent;
+            border: 1px solid #333;
+            color: #888;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .contact-copy:hover {
+            border-color: #555;
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .contact-copy.copied {
+            background: rgba(74, 222, 128, 0.1);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .modal-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #444;
+        }
+
+        /* 复制提示 */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--surface);
+            color: var(--accent);
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-size: 0.9rem;
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* 加载更多 */
+        .load-more {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                margin-top: 0.5rem;
+            }
+            
+            .nav-links a {
+                font-size: 0.85rem;
+            }
+            
+            .home-intro { padding: 3rem 0; }
+            .home-intro h1 { font-size: 1.8rem; }
+            .avatar { width: 100px; height: 100px; }
+            .resource-grid { grid-template-columns: 1fr; }
+            .blog-header { flex-direction: column; gap: 0.5rem; }
+            .blog-detail-title { font-size: 1.5rem; }
+            
+            .file-item {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .file-cover {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .file-download {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .blog-item {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .blog-item-cover {
+                width: 100%;
+                height: 180px;
+            }
+
+            .modal {
+                padding: 1.5rem;
+                border-radius: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                gap: 0.6rem;
+            }
+            
+            .nav-links a {
+                font-size: 0.75rem;
+            }
+            
+            .bilibili-btn {
+                padding: 0.3rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            
+            .file-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.5rem;
+            }
+
+            .file-cover {
+                width: 48px;
+                height: 48px;
+            }
+        }
+
+        /* 焦点样式 */
+        a:focus-visible, button:focus-visible {
+            outline: 2px solid #555;
+            outline-offset: 2px;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <nav role="navigation" aria-label="主导航">
+        <div class="nav-container">
+            <a href="#home" class="logo" onclick="App.showPage('home'); return false;" aria-label="返回主页">我的空间</a>
+            <ul class="nav-links" role="menubar">
+                <li role="none"><a href="#home" role="menuitem" onclick="App.showPage('home'); return false;" class="nav-link active" data-page="home" aria-current="page">主页</a></li>
+                <li role="none"><a href="#resources" role="menuitem" onclick="App.showPage('resources'); return false;" class="nav-link" data-page="resources">资源</a></li>
+                <li role="none"><a href="#downloads" role="menuitem" onclick="App.showPage('downloads'); return false;" class="nav-link" data-page="downloads">下载</a></li>
+                <li role="none"><a href="#blog" role="menuitem" onclick="App.showPage('blog'); return false;" class="nav-link" data-page="blog">博客</a></li>
+                <li role="none"><a href="#about" role="menuitem" onclick="App.showPage('about'); return false;" class="nav-link" data-page="about">关于</a></li>
+            </ul>
+            <a href="https://space.bilibili.com/1013459131" target="_blank" rel="noopener noreferrer" class="bilibili-btn" aria-label="访问B站空间">B站</a>
+        </div>
+    </nav>
+
+    <main id="main-content">
+        <!-- 主页 -->
+        <div id="home" class="page active" role="tabpanel" aria-label="主页">
+            <div class="home-intro">
+                <div class="avatar-container">
+                    <img src="./images/avatar.jpg" alt="用户头像" class="avatar" width="120" height="120" loading="eager" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                    <div class="resource-icon-fallback" style="display: none; margin: 0 auto 2rem; width: 120px; height: 120px; border-radius: 50%; font-size: 3rem;" role="img" aria-label="默认头像">👤</div>
+                </div>
+                <h1>梦语の小站</h1>
+                <p>记录学习，分享资源，探索技术</p>
+                <div class="home-links">
+                    <a href="#blog" onclick="App.showPage('blog'); return false;" class="btn btn-primary">阅读文章</a>
+                    <a href="#downloads" onclick="App.showPage('downloads'); return false;" class="btn">文件下载</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 资源导航 -->
+        <div id="resources" class="page" role="tabpanel" aria-label="资源导航">
+            <h1>资源导航</h1>
+            <div class="category-tabs" id="resourceTabs"></div>
+            <div class="resource-grid" id="resourceList"></div>
+        </div>
+
+        <!-- 文件下载 -->
+        <div id="downloads" class="page" role="tabpanel" aria-label="文件下载">
+            <h1>文件下载</h1>
+            <div class="category-tabs" id="downloadTabs"></div>
+            <div class="file-list" id="fileList"></div>
+        </div>
+
+        <!-- 博客列表 -->
+        <div id="blog" class="page" role="tabpanel" aria-label="博客列表">
+            <h1>我的博客</h1>
+            <div class="category-tabs" id="blogTabs"></div>
+            <div class="blog-list" id="blogList"></div>
+            <div class="load-more" id="loadMoreContainer">
+                <button class="btn" onclick="App.loadMoreBlogs()">加载更多</button>
+            </div>
+        </div>
+
+        <!-- 博文详情 -->
+        <div id="blogDetail" class="page" role="tabpanel" aria-label="博文详情">
+            <button class="btn btn-back" onclick="App.backToBlogList()" aria-label="返回博客列表">
+                <span aria-hidden="true">←</span>
+                <span>返回列表</span>
+            </button>
+            <article class="blog-detail" id="blogDetailContent"></article>
+        </div>
+
+        <!-- 关于 -->
+        <div id="about" class="page" role="tabpanel" aria-label="关于我">
+            <h1>关于我</h1>
+            <div class="about-content">
+                <p>喵~</p>
+                <p>QQ: 1775894379</p>
+                <p>邮箱: mengyu.awa@outlook.com</p>
+                <div class="skills" id="skillList"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p> 梦语の小站 · <a onclick="App.openContactModal()" role="button" tabindex="0">联系我</a> · <a href="https://space.bilibili.com/1013459131" target="_blank" rel="noopener noreferrer">B站空间</a></p>
+        <p style="margin-top: 0.5rem; font-size: 0.8rem;">使用爱与代码构建</p>
+    </footer>
+
+    <!-- 联系弹窗 -->
+    <div class="modal-overlay" id="contactModal" onclick="App.closeContactModalOnOverlay(event)" role="dialog" aria-modal="true" aria-label="联系方式">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">联系我</h2>
+                <button class="modal-close" onclick="App.closeContactModal()" aria-label="关闭弹窗">×</button>
+            </div>
+            <div class="contact-list">
+                <div class="contact-item">
+                    <div class="contact-icon" role="img" aria-label="QQ">🐧</div>
+                    <div class="contact-info">
+                        <div class="contact-label">QQ 号码</div>
+                        <div class="contact-value" id="contactQQ">1775894379</div>
+                    </div>
+                    <button class="contact-copy" onclick="App.copyContact('contactQQ', this)" aria-label="复制QQ号">复制</button>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon" role="img" aria-label="邮箱">✉️</div>
+                    <div class="contact-info">
+                        <div class="contact-label">电子邮箱</div>
+                        <div class="contact-value" id="contactEmail">mengyu.awa@outlook.com</div>
+                    </div>
+                    <button class="contact-copy" onclick="App.copyContact('contactEmail', this)" aria-label="复制邮箱">复制</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                点击复制按钮即可复制到剪贴板
+            </div>
+        </div>
+    </div>
+
+    <!-- 复制提示 -->
+    <div class="toast" id="copyToast" role="status" aria-live="polite"></div>
+
+    <script>
+        // ==================== 数据配置区 ====================
+        const AppData = {
+            blogs: [
+                {
+                    id: 1,
+                    title: '样例博文',
+                    date: '2028-06-07',
+                    category: '样例',
+                    excerpt: '这是一篇样例博文，展示了博客系统的基本功能，包括封面支持、代码高亮、列表渲染等特性。',
+                    tags: ['样例标签', '教程'],
+                    cover: './images/blog/cover1.jpg',
+                    content: `
+                        <p>这是一段样例正文内容，用于演示博客排版效果。在实际使用中，你可以替换为自己的文章。</p>
+                        <img src="./images/blog/example.jpg" alt="示例图片" loading="lazy">
+                        <h2>二级标题样式</h2>
+                        <p>博客系统现已支持图片封面、圆角阴影图片、响应式布局等特性。</p>
+                        <pre><code>// 样例代码块
+function hello() {
+    console.log("Hello, World!");
+}</code></pre>
+                        <h3>三级标题</h3>
+                        <p>正文支持 <code>inline code</code> 和各种富文本格式。</p>
+                        <ul>
+                            <li>列表项一</li>
+                            <li>列表项二</li>
+                            <li>列表项三</li>
+                        </ul>
+                        <blockquote>这是一段引用文本，用于强调重要内容。</blockquote>
+                        <p>文章结尾，感谢阅读。</p>
+                        <img src="./images/blog/end.jpg" alt="结尾图片" loading="lazy">
+                    `
+                }
+            ],
+
+            resources: [
+                { 
+                    name: 'GitHub', 
+                    url: 'https://github.com',
+                    desc: '开源代码托管平台', 
+                    image: './images/icons/github.jpg', 
+                    fallback: '⚡', 
+                    category: '开发', 
+                    tags: ['代码', '开源'] 
+                }
+            ],
+
+            downloads: [
+                {
+                    id: 1,
+                    name: '2026-04-18电脑壁纸',
+                    filename: 'wallpapers_2026_04_18.zip',
+                    size: '175.61 MB',
+                    date: '2026-04-18',
+                    category: '壁纸',
+                    desc: '同学上传的壁纸',
+                    icon: '🏞️',
+                    cover: './images/downloads/wallpapers.jpg',
+                    url: 'https://github.com/mengyu-awa/mengyu-awa/releases/download/wallpapers-2026-04-18/wallpapers_2026_04_18.zip'
+                },
+                {
+                    id: 2,
+                    name: 'vpn及配置',
+                    filename: 'vpn.zip',
+                    size: '14.34 MB',
+                    date: '2026-04-19',
+                    category: '工具',
+                    desc: 'vpn，只能我用',
+                    icon: '🔒',
+                    cover: './images/downloads/vpn.png',
+                    url: 'https://github.com/mengyu-awa/mengyu-awa/releases/download/vpn_with_config/vpn.zip'
+                },
+                {
+                    id: 3,
+                    name: 'v2rayN',
+                    filename: 'v2rayN-windows-64-desktop.zip',
+                    size: '111 MB',
+                    date: '2026-04-19',
+                    category: '工具',
+                    desc: '适用于Windows的VPN',
+                    icon: '🔒',
+                    cover: './images/downloads/v2rayn.png',
+                    url: 'https://github.com/2dust/v2rayN/releases/download/7.20.4/v2rayN-windows-64-desktop.zip'
+                }
+            ],
+
+            skills: ['JavaScript', 'TypeScript', 'React', 'Vue', 'Node.js', 'Python', 'Go', 'Docker']
+        };
+
+        // ==================== 状态管理 ====================
+        const AppState = {
+            currentResourceCategory: '全部',
+            currentBlogCategory: '全部',
+            currentDownloadCategory: '全部',
+            blogDisplayCount: 4
+        };
+
+        // ==================== 核心功能 ====================
+        const App = {
+            init() {
+                this.renderResourceTabs();
+                this.renderResources();
+                this.renderDownloadTabs();
+                this.renderDownloads();
+                this.renderBlogTabs();
+                this.renderBlogs();
+                this.renderSkills();
+                this.setupEventListeners();
+                this.handleInitialRoute();
+            },
+
+            setupEventListeners() {
+                window.addEventListener('popstate', () => {
+                    const hash = window.location.hash.slice(1) || 'home';
+                    if (hash !== 'blogDetail' && document.getElementById(hash)) {
+                        this.showPage(hash, false);
+                    }
+                });
+
+                // ESC键关闭弹窗
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') this.closeContactModal();
+                });
+            },
+
+            handleInitialRoute() {
+                const hash = window.location.hash.slice(1);
+                if (hash && hash !== 'blogDetail' && document.getElementById(hash)) {
+                    this.showPage(hash, false);
+                }
+            },
+
+            showPage(pageName, updateHistory = true) {
+                document.querySelectorAll('.page').forEach(p => {
+                    p.classList.remove('active');
+                    p.setAttribute('aria-hidden', 'true');
+                });
+                
+                const targetPage = document.getElementById(pageName);
+                if (targetPage) {
+                    targetPage.classList.add('active');
+                    targetPage.setAttribute('aria-hidden', 'false');
+                    targetPage.setAttribute('tabindex', '-1');
+                    targetPage.focus({ preventScroll: true });
+                }
+                
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    const isActive = link.dataset.page === pageName;
+                    link.classList.toggle('active', isActive);
+                    link.setAttribute('aria-current', isActive ? 'page' : 'false');
+                });
+                
+                if (updateHistory) {
+                    history.pushState(null, null, '#' + pageName);
+                }
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            // ==================== 联系弹窗 ====================
+            openContactModal() {
+                const modal = document.getElementById('contactModal');
+                modal.classList.add('active');
+                document.body.classList.add('modal-open');
+                
+                setTimeout(() => {
+                    modal.querySelector('.modal-close').focus();
+                }, 100);
+            },
+
+            closeContactModal() {
+                const modal = document.getElementById('contactModal');
+                modal.classList.remove('active');
+                document.body.classList.remove('modal-open');
+                
+                document.querySelector('footer a[onclick*="openContactModal"]').focus();
+            },
+
+            closeContactModalOnOverlay(event) {
+                if (event.target === event.currentTarget) {
+                    this.closeContactModal();
+                }
+            },
+
+            async copyContact(elementId, button) {
+                const text = document.getElementById(elementId).textContent;
+                
+                try {
+                    await navigator.clipboard.writeText(text);
+                    this.showToast('已复制到剪贴板');
+                    
+                    button.classList.add('copied');
+                    button.textContent = '已复制';
+                    
+                    setTimeout(() => {
+                        button.classList.remove('copied');
+                        button.textContent = '复制';
+                    }, 2000);
+                } catch (err) {
+                    const input = document.createElement('input');
+                    input.value = text;
+                    document.body.appendChild(input);
+                    input.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(input);
+                    
+                    this.showToast('已复制到剪贴板');
+                }
+            },
+
+            showToast(message) {
+                const toast = document.getElementById('copyToast');
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000);
+            },
+
+            // ==================== 资源模块 ====================
+            renderResourceTabs() {
+                const categories = ['全部', ...new Set(AppData.resources.map(r => r.category))];
+                const container = document.getElementById('resourceTabs');
+                container.innerHTML = categories.map(cat => 
+                    `<button class="category-tab ${cat === AppState.currentResourceCategory ? 'active' : ''}" 
+                        onclick="App.filterResources('${cat}')"
+                        aria-pressed="${cat === AppState.currentResourceCategory}">${cat}</button>`
+                ).join('');
+            },
+
+            renderResources() {
+                const filtered = AppState.currentResourceCategory === '全部' 
+                    ? AppData.resources 
+                    : AppData.resources.filter(r => r.category === AppState.currentResourceCategory);
+                
+                const container = document.getElementById('resourceList');
+                
+                if (filtered.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 3rem;">暂无该分类的资源</p>';
+                    return;
+                }
+                
+                container.innerHTML = filtered.map((r, i) => `
+                    <a href="${r.url}" target="_blank" rel="noopener noreferrer" class="resource-card" style="animation-delay: ${i * 0.1}s">
+                        <img src="${r.image}" alt="${r.name}" class="resource-icon" width="48" height="48" loading="lazy" 
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                        <div class="resource-icon-fallback" style="display: none;" role="img" aria-label="${r.name}图标">${r.fallback}</div>
+                        <div class="resource-name">${r.name}</div>
+                        <div class="resource-desc">${r.desc}</div>
+                        <div class="resource-meta">
+                            ${r.tags.map(t => `<span class="resource-tag">${t}</span>`).join('')}
+                        </div>
+                    </a>
+                `).join('');
+            },
+
+            filterResources(category) {
+                AppState.currentResourceCategory = category;
+                this.renderResourceTabs();
+                this.renderResources();
+            },
+
+            // ==================== 下载模块 ====================
+            renderDownloadTabs() {
+                const categories = ['全部', ...new Set(AppData.downloads.map(d => d.category))];
+                const container = document.getElementById('downloadTabs');
+                container.innerHTML = categories.map(cat => 
+                    `<button class="category-tab ${cat === AppState.currentDownloadCategory ? 'active' : ''}" 
+                        onclick="App.filterDownloads('${cat}')"
+                        aria-pressed="${cat === AppState.currentDownloadCategory}">${cat}</button>`
+                ).join('');
+            },
+
+            renderDownloads() {
+                const filtered = AppState.currentDownloadCategory === '全部' 
+                    ? AppData.downloads 
+                    : AppData.downloads.filter(d => d.category === AppState.currentDownloadCategory);
+                
+                const container = document.getElementById('fileList');
+                
+                if (filtered.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 3rem;">暂无该分类的文件</p>';
+                    return;
+                }
+                
+                container.innerHTML = filtered.map((f, i) => `
+                    <div class="file-item" style="animation-delay: ${i * 0.1}s">
+                        ${f.cover ? 
+                            `<img src="${f.cover}" alt="${f.name}封面" class="file-cover" width="56" height="56" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">` : 
+                            ''
+                        }
+                        <div class="file-icon" role="img" aria-label="文件图标" style="${f.cover ? 'display: none;' : ''}">${f.icon}</div>
+                        <div class="file-info">
+                            <div class="file-name">${f.name}</div>
+                            <div class="file-meta">
+                                <span>${f.filename}</span>
+                                <span>${f.size}</span>
+                                <span>${f.date}</span>
+                                <span style="color: #555; background: #1a1a1a; padding: 0.1rem 0.5rem; border-radius: 3px; font-size: 0.8rem;">${f.category}</span>
+                            </div>
+                            <div class="file-desc">${f.desc}</div>
+                        </div>
+                        <a href="${f.url}" class="file-download" download onclick="App.handleDownload(this, '${f.name}')" aria-label="下载 ${f.name}">
+                            <span aria-hidden="true">↓</span>
+                            <span>下载</span>
+                        </a>
+                    </div>
+                `).join('');
+            },
+
+            filterDownloads(category) {
+                AppState.currentDownloadCategory = category;
+                this.renderDownloadTabs();
+                this.renderDownloads();
+            },
+
+            handleDownload(element, filename) {
+                element.classList.add('downloaded');
+                element.innerHTML = '<span aria-hidden="true">✓</span><span>已下载</span>';
+                
+                setTimeout(() => {
+                    element.classList.remove('downloaded');
+                    element.innerHTML = '<span aria-hidden="true">↓</span><span>下载</span>';
+                }, 3000);
+            },
+
+            // ==================== 博客模块 ====================
+            renderBlogTabs() {
+                const categories = ['全部', ...new Set(AppData.blogs.map(b => b.category))];
+                const container = document.getElementById('blogTabs');
+                container.innerHTML = categories.map(cat => 
+                    `<button class="category-tab ${cat === AppState.currentBlogCategory ? 'active' : ''}" 
+                        onclick="App.filterBlogs('${cat}')"
+                        aria-pressed="${cat === AppState.currentBlogCategory}">${cat}</button>`
+                ).join('');
+            },
+
+            renderBlogs() {
+                const filtered = AppState.currentBlogCategory === '全部' 
+                    ? AppData.blogs 
+                    : AppData.blogs.filter(b => b.category === AppState.currentBlogCategory);
+                
+                const display = filtered.slice(0, AppState.blogDisplayCount);
+                const container = document.getElementById('blogList');
+                
+                if (display.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 3rem;">该分类下暂无文章</p>';
+                    document.getElementById('loadMoreContainer').style.display = 'none';
+                    return;
+                }
+                
+                container.innerHTML = display.map((b, i) => `
+                    <article class="blog-item" style="animation-delay: ${i * 0.1}s" onclick="App.showBlogDetail(${b.id})" role="button" tabindex="0" 
+                        aria-label="阅读文章：${b.title}" onkeypress="if(event.key==='Enter') App.showBlogDetail(${b.id})">
+                        ${b.cover ? `<img src="${b.cover}" alt="${b.title}封面" class="blog-item-cover" width="120" height="80" loading="lazy" onerror="this.style.display='none'">` : ''}
+                        <div class="blog-item-content">
+                            <div class="blog-header">
+                                <div class="blog-title">${b.title}</div>
+                                <span class="blog-category">${b.category}</span>
+                            </div>
+                            <div class="blog-meta">
+                                <span>${b.date}</span>
+                                <span>${b.tags.join(' · ')}</span>
+                            </div>
+                            <div class="blog-excerpt">${b.excerpt}</div>
+                        </div>
+                    </article>
+                `).join('');
+
+                const hasMore = filtered.length > AppState.blogDisplayCount;
+                document.getElementById('loadMoreContainer').style.display = hasMore ? 'block' : 'none';
+            },
+
+            filterBlogs(category) {
+                AppState.currentBlogCategory = category;
+                AppState.blogDisplayCount = 4;
+                this.renderBlogTabs();
+                this.renderBlogs();
+            },
+
+            loadMoreBlogs() {
+                AppState.blogDisplayCount += 3;
+                this.renderBlogs();
+            },
+
+            showBlogDetail(blogId) {
+                const blog = AppData.blogs.find(b => b.id === blogId);
+                if (!blog) return;
+
+                const container = document.getElementById('blogDetailContent');
+                container.innerHTML = `
+                    <header class="blog-detail-header">
+                        ${blog.cover ? `<img src="${blog.cover}" alt="${blog.title}封面" class="blog-detail-cover" loading="eager" onerror="this.style.display='none'">` : ''}
+                        <h1 class="blog-detail-title">${blog.title}</h1>
+                        <div class="blog-detail-meta">
+                            <span>${blog.date}</span>
+                            <span>${blog.category}</span>
+                            <span>${blog.tags.join(' · ')}</span>
+                        </div>
+                        <div class="blog-detail-tags">
+                            ${blog.tags.map(t => `<span class="blog-detail-tag">${t}</span>`).join('')}
+                        </div>
+                    </header>
+                    <div class="blog-detail-content">
+                        ${blog.content}
+                    </div>
+                `;
+
+                document.getElementById('blog').classList.remove('active');
+                document.getElementById('blogDetail').classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            backToBlogList() {
+                document.getElementById('blogDetail').classList.remove('active');
+                document.getElementById('blog').classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            renderSkills() {
+                document.getElementById('skillList').innerHTML = 
+                    AppData.skills.map(s => `<span class="skill-tag">${s}</span>`).join('');
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => App.init());
+    </script>
+</body>
+</html>
