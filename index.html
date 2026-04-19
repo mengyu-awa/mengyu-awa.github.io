@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -25,6 +24,7 @@
             --accent: #fff;
             --border: #222;
             --success: #4ade80;
+            --primary: #3b82f6;
         }
 
         body {
@@ -245,6 +245,12 @@
             border-color: #555;
             background: rgba(255, 255, 255, 0.05);
             transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
         }
 
         .btn-primary {
@@ -973,10 +979,69 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* 加载更多 */
-        .load-more {
-            text-align: center;
+        /* 分页控件 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
             margin-top: 2rem;
+            padding: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .pagination-btn {
+            min-width: 40px;
+            height: 40px;
+            padding: 0 0.8rem;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            border-color: #555;
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg);
+            font-weight: 600;
+        }
+
+        .pagination-btn.prev,
+        .pagination-btn.next {
+            padding: 0 1rem;
+            gap: 0.3rem;
+        }
+
+        .pagination-ellipsis {
+            color: var(--text-muted);
+            padding: 0 0.3rem;
+            user-select: none;
+        }
+
+        .pagination-info {
+            width: 100%;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
         }
 
         /* 移动端适配 */
@@ -1034,6 +1099,22 @@
                 padding: 1.5rem;
                 border-radius: 12px;
             }
+
+            .pagination {
+                gap: 0.3rem;
+            }
+
+            .pagination-btn {
+                min-width: 36px;
+                height: 36px;
+                padding: 0 0.6rem;
+                font-size: 0.85rem;
+            }
+
+            .pagination-btn.prev,
+            .pagination-btn.next {
+                padding: 0 0.8rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1059,6 +1140,13 @@
             .file-cover {
                 width: 48px;
                 height: 48px;
+            }
+
+            .pagination-btn {
+                min-width: 32px;
+                height: 32px;
+                padding: 0 0.5rem;
+                font-size: 0.8rem;
             }
         }
 
@@ -1110,6 +1198,7 @@
             <h1>资源导航</h1>
             <div class="category-tabs" id="resourceTabs"></div>
             <div class="resource-grid" id="resourceList"></div>
+            <div class="pagination" id="resourcePagination"></div>
         </div>
 
         <!-- 文件下载 -->
@@ -1117,6 +1206,7 @@
             <h1>文件下载</h1>
             <div class="category-tabs" id="downloadTabs"></div>
             <div class="file-list" id="fileList"></div>
+            <div class="pagination" id="downloadPagination"></div>
         </div>
 
         <!-- 博客列表 -->
@@ -1124,9 +1214,7 @@
             <h1>我的博客</h1>
             <div class="category-tabs" id="blogTabs"></div>
             <div class="blog-list" id="blogList"></div>
-            <div class="load-more" id="loadMoreContainer">
-                <button class="btn" onclick="App.loadMoreBlogs()">加载更多</button>
-            </div>
+            <div class="pagination" id="blogPagination"></div>
         </div>
 
         <!-- 博文详情 -->
@@ -1190,12 +1278,21 @@
     <div class="toast" id="copyToast" role="status" aria-live="polite"></div>
 
     <script>
+        // ==================== 分页配置 ====================
+        const PaginationConfig = {
+            resources: { itemsPerPage: 6 },
+            downloads: { itemsPerPage: 5 },
+            blogs: { itemsPerPage: 4 }
+        };
+
         // ==================== 状态管理 ====================
         const AppState = {
             currentResourceCategory: '全部',
-            currentBlogCategory: '全部',
             currentDownloadCategory: '全部',
-            blogDisplayCount: 4,
+            currentBlogCategory: '全部',
+            resourcePage: 1,
+            downloadPage: 1,
+            blogPage: 1,
             data: null
         };
 
@@ -1269,6 +1366,51 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
 
+            // ==================== 分页通用方法 ====================
+            renderPagination(containerId, currentPage, totalPages, totalItems, onPageChange) {
+                const container = document.getElementById(containerId);
+                if (totalPages <= 1) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                let pages = [];
+                const maxVisible = 5;
+                
+                if (totalPages <= maxVisible) {
+                    for (let i = 1; i <= totalPages; i++) pages.push(i);
+                } else {
+                    if (currentPage <= 3) {
+                        pages = [1, 2, 3, 4, '...', totalPages];
+                    } else if (currentPage >= totalPages - 2) {
+                        pages = [1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+                    } else {
+                        pages = [1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages];
+                    }
+                }
+
+                const startItem = (currentPage - 1) * PaginationConfig[containerId.replace('Pagination', '')].itemsPerPage + 1;
+                const endItem = Math.min(currentPage * PaginationConfig[containerId.replace('Pagination', '')].itemsPerPage, totalItems);
+
+                let html = `<div class="pagination-info">共 ${totalItems} 项，第 ${startItem}-${endItem} 项</div>`;
+                
+                html += `<button class="pagination-btn prev" ${currentPage === 1 ? 'disabled' : ''} onclick="${onPageChange}(${currentPage - 1})" aria-label="上一页">`;
+                html += `<span>←</span><span>上一页</span></button>`;
+
+                pages.forEach(p => {
+                    if (p === '...') {
+                        html += `<span class="pagination-ellipsis">...</span>`;
+                    } else {
+                        html += `<button class="pagination-btn ${p === currentPage ? 'active' : ''}" onclick="${onPageChange}(${p})" aria-label="第${p}页" ${p === currentPage ? 'aria-current="page"' : ''}>${p}</button>`;
+                    }
+                });
+
+                html += `<button class="pagination-btn next" ${currentPage === totalPages ? 'disabled' : ''} onclick="${onPageChange}(${currentPage + 1})" aria-label="下一页">`;
+                html += `<span>下一页</span><span>→</span></button>`;
+
+                container.innerHTML = html;
+            },
+
             // ==================== 联系弹窗 ====================
             openContactModal() {
                 const modal = document.getElementById('contactModal');
@@ -1330,7 +1472,7 @@
                 }, 2000);
             },
 
-            // ==================== 资源模块 ====================
+            // ==================== 资源模块（分页） ====================
             renderResourceTabs() {
                 const categories = ['全部', ...new Set(AppState.data.resources.map(r => r.category))];
                 const container = document.getElementById('resourceTabs');
@@ -1350,10 +1492,18 @@
                 
                 if (filtered.length === 0) {
                     container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 3rem;">暂无该分类的资源</p>';
+                    document.getElementById('resourcePagination').innerHTML = '';
                     return;
                 }
+
+                const { itemsPerPage } = PaginationConfig.resources;
+                const totalPages = Math.ceil(filtered.length / itemsPerPage);
+                AppState.resourcePage = Math.min(AppState.resourcePage, totalPages);
                 
-                container.innerHTML = filtered.map((r, i) => `
+                const start = (AppState.resourcePage - 1) * itemsPerPage;
+                const display = filtered.slice(start, start + itemsPerPage);
+                
+                container.innerHTML = display.map((r, i) => `
                     <a href="${r.url}" target="_blank" rel="noopener noreferrer" class="resource-card" style="animation-delay: ${i * 0.1}s">
                         <img src="${r.image}" alt="${r.name}" class="resource-icon" width="48" height="48" loading="lazy" 
                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
@@ -1365,15 +1515,24 @@
                         </div>
                     </a>
                 `).join('');
+
+                this.renderPagination('resourcePagination', AppState.resourcePage, totalPages, filtered.length, 'App.goToResourcePage');
+            },
+
+            goToResourcePage(page) {
+                AppState.resourcePage = page;
+                this.renderResources();
+                document.getElementById('resources').scrollIntoView({ behavior: 'smooth' });
             },
 
             filterResources(category) {
                 AppState.currentResourceCategory = category;
+                AppState.resourcePage = 1;
                 this.renderResourceTabs();
                 this.renderResources();
             },
 
-            // ==================== 下载模块 ====================
+            // ==================== 下载模块（分页） ====================
             renderDownloadTabs() {
                 const categories = ['全部', ...new Set(AppState.data.downloads.map(d => d.category))];
                 const container = document.getElementById('downloadTabs');
@@ -1393,10 +1552,18 @@
                 
                 if (filtered.length === 0) {
                     container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 3rem;">暂无该分类的文件</p>';
+                    document.getElementById('downloadPagination').innerHTML = '';
                     return;
                 }
+
+                const { itemsPerPage } = PaginationConfig.downloads;
+                const totalPages = Math.ceil(filtered.length / itemsPerPage);
+                AppState.downloadPage = Math.min(AppState.downloadPage, totalPages);
                 
-                container.innerHTML = filtered.map((f, i) => `
+                const start = (AppState.downloadPage - 1) * itemsPerPage;
+                const display = filtered.slice(start, start + itemsPerPage);
+                
+                container.innerHTML = display.map((f, i) => `
                     <div class="file-item" style="animation-delay: ${i * 0.1}s">
                         ${f.cover ? 
                             `<img src="${f.cover}" alt="${f.name}封面" class="file-cover" width="56" height="56" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">` : 
@@ -1419,10 +1586,19 @@
                         </a>
                     </div>
                 `).join('');
+
+                this.renderPagination('downloadPagination', AppState.downloadPage, totalPages, filtered.length, 'App.goToDownloadPage');
+            },
+
+            goToDownloadPage(page) {
+                AppState.downloadPage = page;
+                this.renderDownloads();
+                document.getElementById('downloads').scrollIntoView({ behavior: 'smooth' });
             },
 
             filterDownloads(category) {
                 AppState.currentDownloadCategory = category;
+                AppState.downloadPage = 1;
                 this.renderDownloadTabs();
                 this.renderDownloads();
             },
@@ -1437,7 +1613,7 @@
                 }, 3000);
             },
 
-            // ==================== 博客模块 ====================
+            // ==================== 博客模块（分页） ====================
             renderBlogTabs() {
                 const categories = ['全部', ...new Set(AppState.data.blogs.map(b => b.category))];
                 const container = document.getElementById('blogTabs');
@@ -1453,14 +1629,20 @@
                     ? AppState.data.blogs 
                     : AppState.data.blogs.filter(b => b.category === AppState.currentBlogCategory);
                 
-                const display = filtered.slice(0, AppState.blogDisplayCount);
                 const container = document.getElementById('blogList');
                 
-                if (display.length === 0) {
+                if (filtered.length === 0) {
                     container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 3rem;">该分类下暂无文章</p>';
-                    document.getElementById('loadMoreContainer').style.display = 'none';
+                    document.getElementById('blogPagination').innerHTML = '';
                     return;
                 }
+
+                const { itemsPerPage } = PaginationConfig.blogs;
+                const totalPages = Math.ceil(filtered.length / itemsPerPage);
+                AppState.blogPage = Math.min(AppState.blogPage, totalPages);
+                
+                const start = (AppState.blogPage - 1) * itemsPerPage;
+                const display = filtered.slice(start, start + itemsPerPage);
                 
                 container.innerHTML = display.map((b, i) => `
                     <article class="blog-item" style="animation-delay: ${i * 0.1}s" onclick="App.showBlogDetail(${b.id})" role="button" tabindex="0" 
@@ -1480,19 +1662,19 @@
                     </article>
                 `).join('');
 
-                const hasMore = filtered.length > AppState.blogDisplayCount;
-                document.getElementById('loadMoreContainer').style.display = hasMore ? 'block' : 'none';
+                this.renderPagination('blogPagination', AppState.blogPage, totalPages, filtered.length, 'App.goToBlogPage');
+            },
+
+            goToBlogPage(page) {
+                AppState.blogPage = page;
+                this.renderBlogs();
+                document.getElementById('blog').scrollIntoView({ behavior: 'smooth' });
             },
 
             filterBlogs(category) {
                 AppState.currentBlogCategory = category;
-                AppState.blogDisplayCount = 4;
+                AppState.blogPage = 1;
                 this.renderBlogTabs();
-                this.renderBlogs();
-            },
-
-            loadMoreBlogs() {
-                AppState.blogDisplayCount += 3;
                 this.renderBlogs();
             },
 
