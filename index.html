@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -1189,105 +1190,27 @@
     <div class="toast" id="copyToast" role="status" aria-live="polite"></div>
 
     <script>
-        // ==================== 数据配置区 ====================
-        const AppData = {
-            blogs: [
-                {
-                    id: 1,
-                    title: '样例博文',
-                    date: '2028-06-07',
-                    category: '样例',
-                    excerpt: '这是一篇样例博文，展示了博客系统的基本功能，包括封面支持、代码高亮、列表渲染等特性。',
-                    tags: ['样例标签', '教程'],
-                    cover: './images/blog/cover1.jpg',
-                    content: `
-                        <p>这是一段样例正文内容，用于演示博客排版效果。在实际使用中，你可以替换为自己的文章。</p>
-                        <img src="./images/blog/example.jpg" alt="示例图片" loading="lazy">
-                        <h2>二级标题样式</h2>
-                        <p>博客系统现已支持图片封面、圆角阴影图片、响应式布局等特性。</p>
-                        <pre><code>// 样例代码块
-function hello() {
-    console.log("Hello, World!");
-}</code></pre>
-                        <h3>三级标题</h3>
-                        <p>正文支持 <code>inline code</code> 和各种富文本格式。</p>
-                        <ul>
-                            <li>列表项一</li>
-                            <li>列表项二</li>
-                            <li>列表项三</li>
-                        </ul>
-                        <blockquote>这是一段引用文本，用于强调重要内容。</blockquote>
-                        <p>文章结尾，感谢阅读。</p>
-                        <img src="./images/blog/end.jpg" alt="结尾图片" loading="lazy">
-                    `
-                }
-            ],
-
-            resources: [
-                { 
-                    name: 'GitHub', 
-                    url: 'https://github.com',
-                    desc: '开源代码托管平台', 
-                    image: './images/icons/github.jpg', 
-                    fallback: '⚡', 
-                    category: '开发', 
-                    tags: ['代码', '开源'] 
-                }
-            ],
-
-            downloads: [
-                {
-                    id: 1,
-                    name: '2026-04-18电脑壁纸',
-                    filename: 'wallpapers_2026_04_18.zip',
-                    size: '175.61 MB',
-                    date: '2026-04-18',
-                    category: '壁纸',
-                    desc: '同学上传的壁纸',
-                    icon: '🏞️',
-                    cover: './images/downloads/wallpapers.jpg',
-                    url: 'https://github.com/mengyu-awa/mengyu-awa/releases/download/wallpapers-2026-04-18/wallpapers_2026_04_18.zip'
-                },
-                {
-                    id: 2,
-                    name: 'vpn及配置',
-                    filename: 'vpn.zip',
-                    size: '14.34 MB',
-                    date: '2026-04-19',
-                    category: '工具',
-                    desc: 'vpn，只能我用',
-                    icon: '🔒',
-                    cover: './images/downloads/vpn.png',
-                    url: 'https://github.com/mengyu-awa/mengyu-awa/releases/download/vpn_with_config/vpn.zip'
-                },
-                {
-                    id: 3,
-                    name: 'v2rayN',
-                    filename: 'v2rayN-windows-64-desktop.zip',
-                    size: '111 MB',
-                    date: '2026-04-19',
-                    category: '工具',
-                    desc: '适用于Windows的VPN',
-                    icon: '🔒',
-                    cover: './images/downloads/v2rayn.png',
-                    url: 'https://github.com/2dust/v2rayN/releases/download/7.20.4/v2rayN-windows-64-desktop.zip'
-                }
-            ],
-
-            skills: ['JavaScript', 'TypeScript', 'React', 'Vue', 'Node.js', 'Python', 'Go', 'Docker']
-        };
-
         // ==================== 状态管理 ====================
         const AppState = {
             currentResourceCategory: '全部',
             currentBlogCategory: '全部',
             currentDownloadCategory: '全部',
-            blogDisplayCount: 4
+            blogDisplayCount: 4,
+            data: null
         };
 
         // ==================== 核心功能 ====================
         const App = {
-            init() {
+            async init() {
+                try {
+                    const response = await fetch('./data.json');
+                    if (!response.ok) throw new Error('Failed to load data');
+                    AppState.data = await response.json();
+                } catch (error) {
+                    console.error('Failed to load data:', error);
+                    AppState.data = { blogs: [], resources: [], downloads: [], skills: [] };
+                }
+
                 this.renderResourceTabs();
                 this.renderResources();
                 this.renderDownloadTabs();
@@ -1307,7 +1230,6 @@ function hello() {
                     }
                 });
 
-                // ESC键关闭弹窗
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') this.closeContactModal();
                 });
@@ -1410,7 +1332,7 @@ function hello() {
 
             // ==================== 资源模块 ====================
             renderResourceTabs() {
-                const categories = ['全部', ...new Set(AppData.resources.map(r => r.category))];
+                const categories = ['全部', ...new Set(AppState.data.resources.map(r => r.category))];
                 const container = document.getElementById('resourceTabs');
                 container.innerHTML = categories.map(cat => 
                     `<button class="category-tab ${cat === AppState.currentResourceCategory ? 'active' : ''}" 
@@ -1421,8 +1343,8 @@ function hello() {
 
             renderResources() {
                 const filtered = AppState.currentResourceCategory === '全部' 
-                    ? AppData.resources 
-                    : AppData.resources.filter(r => r.category === AppState.currentResourceCategory);
+                    ? AppState.data.resources 
+                    : AppState.data.resources.filter(r => r.category === AppState.currentResourceCategory);
                 
                 const container = document.getElementById('resourceList');
                 
@@ -1453,7 +1375,7 @@ function hello() {
 
             // ==================== 下载模块 ====================
             renderDownloadTabs() {
-                const categories = ['全部', ...new Set(AppData.downloads.map(d => d.category))];
+                const categories = ['全部', ...new Set(AppState.data.downloads.map(d => d.category))];
                 const container = document.getElementById('downloadTabs');
                 container.innerHTML = categories.map(cat => 
                     `<button class="category-tab ${cat === AppState.currentDownloadCategory ? 'active' : ''}" 
@@ -1464,8 +1386,8 @@ function hello() {
 
             renderDownloads() {
                 const filtered = AppState.currentDownloadCategory === '全部' 
-                    ? AppData.downloads 
-                    : AppData.downloads.filter(d => d.category === AppState.currentDownloadCategory);
+                    ? AppState.data.downloads 
+                    : AppState.data.downloads.filter(d => d.category === AppState.currentDownloadCategory);
                 
                 const container = document.getElementById('fileList');
                 
@@ -1517,7 +1439,7 @@ function hello() {
 
             // ==================== 博客模块 ====================
             renderBlogTabs() {
-                const categories = ['全部', ...new Set(AppData.blogs.map(b => b.category))];
+                const categories = ['全部', ...new Set(AppState.data.blogs.map(b => b.category))];
                 const container = document.getElementById('blogTabs');
                 container.innerHTML = categories.map(cat => 
                     `<button class="category-tab ${cat === AppState.currentBlogCategory ? 'active' : ''}" 
@@ -1528,8 +1450,8 @@ function hello() {
 
             renderBlogs() {
                 const filtered = AppState.currentBlogCategory === '全部' 
-                    ? AppData.blogs 
-                    : AppData.blogs.filter(b => b.category === AppState.currentBlogCategory);
+                    ? AppState.data.blogs 
+                    : AppState.data.blogs.filter(b => b.category === AppState.currentBlogCategory);
                 
                 const display = filtered.slice(0, AppState.blogDisplayCount);
                 const container = document.getElementById('blogList');
@@ -1575,7 +1497,7 @@ function hello() {
             },
 
             showBlogDetail(blogId) {
-                const blog = AppData.blogs.find(b => b.id === blogId);
+                const blog = AppState.data.blogs.find(b => b.id === blogId);
                 if (!blog) return;
 
                 const container = document.getElementById('blogDetailContent');
@@ -1610,7 +1532,7 @@ function hello() {
 
             renderSkills() {
                 document.getElementById('skillList').innerHTML = 
-                    AppData.skills.map(s => `<span class="skill-tag">${s}</span>`).join('');
+                    AppState.data.skills.map(s => `<span class="skill-tag">${s}</span>`).join('');
             }
         };
 
