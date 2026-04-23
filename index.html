@@ -123,22 +123,102 @@
             width: 100%;
         }
 
-        .bilibili-btn {
-            background: #fb7299;
-            color: #fff;
-            padding: 0.4rem 1rem;
+        /* 菜单按钮 - 三条横线 */
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
             border-radius: 4px;
-            text-decoration: none;
-            font-size: 0.85rem;
-            opacity: 0;
-            transform: scale(0.9);
-            animation: popIn 0.5s ease-out 1.4s forwards;
-            white-space: nowrap;
-            flex-shrink: 0;
+            transition: all 0.2s;
         }
 
-        @keyframes popIn {
-            to { opacity: 1; transform: scale(1); }
+        .menu-btn .bar {
+            display: block;
+            width: 20px;
+            height: 1.5px;
+            background: currentColor;
+            border-radius: 1px;
+            transition: all 0.3s;
+        }
+
+        .menu-btn:hover {
+            color: var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* 菜单弹窗 - Windows右键菜单风格 */
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.15s ease, visibility 0.15s ease;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .menu-panel {
+            position: fixed;
+            top: 56px;
+            right: 5%;
+            width: 180px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+            z-index: 1001;
+            padding: 6px;
+            transform: scale(0.96);
+            opacity: 0;
+            transition: all 0.15s ease;
+            transform-origin: top right;
+        }
+
+        .menu-overlay.active .menu-panel {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .menu-item {
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: #ccc;
+            font-size: 0.85rem;
+            display: block;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--accent);
+        }
+
+        .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--accent);
         }
 
         /* 页面容器 */
@@ -263,6 +343,18 @@
         .btn-primary:hover {
             background: #e0e0e0;
             box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-bilibili {
+            background: #fb7299;
+            color: #fff;
+            border-color: #fb7299;
+            font-weight: 500;
+        }
+
+        .btn-bilibili:hover {
+            background: #fc8bab;
+            box-shadow: 0 4px 20px rgba(251, 114, 153, 0.2);
         }
 
         .btn-back {
@@ -774,6 +866,386 @@
             transform: translateY(-2px);
         }
 
+        /* 墓页面 */
+        .tomb-intro {
+            padding: 3rem 0;
+            text-align: center;
+            opacity: 0;
+            animation: fadeUp 0.8s ease-out 0.2s forwards;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 2rem;
+        }
+
+        .tomb-intro h1 {
+            font-size: 2.4rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .tomb-intro p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .tomb-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .tomb-item {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--border);
+            opacity: 0;
+            animation: fadeUp 0.6s ease-out forwards;
+            cursor: pointer;
+            transition: padding-left 0.3s;
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .tomb-item:nth-child(1) { animation-delay: 0.1s; }
+        .tomb-item:nth-child(2) { animation-delay: 0.2s; }
+        .tomb-item:nth-child(3) { animation-delay: 0.3s; }
+        .tomb-item:nth-child(4) { animation-delay: 0.4s; }
+
+        .tomb-item:hover {
+            padding-left: 1rem;
+        }
+
+        .tomb-item:last-child {
+            border-bottom: none;
+        }
+
+        .tomb-item-cover {
+            width: 120px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            filter: grayscale(0.6);
+        }
+
+        .tomb-item:hover .tomb-item-cover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+            filter: grayscale(0.3);
+        }
+
+        .tomb-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tomb-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+            gap: 1rem;
+        }
+
+        .tomb-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent);
+            transition: color 0.3s;
+        }
+
+        .tomb-item:hover .tomb-name {
+            color: #fff;
+        }
+
+        .tomb-dates {
+            font-size: 0.75rem;
+            color: #555;
+            background: #1a1a1a;
+            padding: 0.2rem 0.6rem;
+            border-radius: 3px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .tomb-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .tomb-excerpt {
+            color: #888;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* 墓详情页 */
+        .tomb-detail {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .tomb-detail-header {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tomb-detail-cover {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            filter: grayscale(0.4);
+        }
+
+        .tomb-detail-name {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .tomb-detail-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .tomb-detail-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .tomb-detail-tag {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 0.3rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        /* 墓详情 - 顶部自定义介绍 */
+        .tomb-detail-intro {
+            margin-bottom: 3rem;
+            padding: 1.5rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 1.05rem;
+            line-height: 1.9;
+            color: #ccc;
+        }
+
+        .tomb-detail-intro p {
+            margin-bottom: 1.2rem;
+        }
+
+        .tomb-detail-intro img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            margin: 1rem 0;
+            display: block;
+            border: 1px solid var(--border);
+        }
+
+        .tomb-detail-intro h2,
+        .tomb-detail-intro h3 {
+            color: var(--accent);
+            margin: 1.5rem 0 0.8rem;
+            font-weight: 600;
+        }
+
+        .tomb-detail-intro h2 {
+            font-size: 1.3rem;
+        }
+
+        .tomb-detail-intro h3 {
+            font-size: 1.1rem;
+        }
+
+        .tomb-detail-intro blockquote {
+            border-left: 3px solid #444;
+            padding-left: 1rem;
+            margin: 1.2rem 0;
+            color: #999;
+            font-style: italic;
+        }
+
+        /* 墓详情 - 追忆文章折叠列表 */
+        .tomb-articles-section {
+            margin-top: 2rem;
+        }
+
+        .tomb-articles-heading {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tomb-articles {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .tomb-article {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .tomb-article:hover {
+            border-color: #333;
+        }
+
+        .tomb-article-summary {
+            padding: 1.2rem 1.5rem;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 1.05rem;
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        .tomb-article-summary:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .tomb-article-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .tomb-article-summary::after {
+            content: '+';
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            transition: transform 0.2s, color 0.2s;
+            flex-shrink: 0;
+        }
+
+        .tomb-article[open] .tomb-article-summary::after {
+            content: '−';
+            color: var(--accent);
+        }
+
+        .tomb-article-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 400;
+            white-space: nowrap;
+        }
+
+        .tomb-article-body {
+            padding: 0 1.5rem 1.5rem;
+            font-size: 1rem;
+            line-height: 1.9;
+            color: #bbb;
+            border-top: 1px solid var(--border);
+            margin-top: 0;
+            padding-top: 1.2rem;
+        }
+
+        .tomb-article-body p {
+            margin-bottom: 1.2rem;
+        }
+
+        .tomb-article-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+            margin: 1rem 0;
+            display: block;
+            border: 1px solid var(--border);
+        }
+
+        .tomb-article-body h2,
+        .tomb-article-body h3 {
+            color: var(--accent);
+            margin: 1.5rem 0 0.8rem;
+            font-weight: 600;
+        }
+
+        .tomb-article-body h2 {
+            font-size: 1.2rem;
+        }
+
+        .tomb-article-body h3 {
+            font-size: 1.05rem;
+        }
+
+        .tomb-article-body blockquote {
+            border-left: 3px solid #444;
+            padding-left: 1rem;
+            margin: 1.2rem 0;
+            color: #999;
+            font-style: italic;
+        }
+
+        .tomb-article-body ul,
+        .tomb-article-body ol {
+            margin: 1rem 0 1.2rem 1.5rem;
+        }
+
+        .tomb-article-body li {
+            margin-bottom: 0.4rem;
+        }
+
+        .tomb-article-body code {
+            background: #1a1a1a;
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+
+        .tomb-article-body pre {
+            background: #0f0f0f;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border);
+        }
+
+        .tomb-article-body pre code {
+            background: transparent;
+            padding: 0;
+        }
+
         /* 页脚 */
         footer {
             text-align: center;
@@ -1125,6 +1597,29 @@
                 height: 180px;
             }
 
+            .tomb-item {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .tomb-item-cover {
+                width: 100%;
+                height: 180px;
+            }
+
+            .tomb-detail-intro {
+                padding: 1rem;
+            }
+
+            .tomb-article-summary {
+                padding: 1rem;
+                font-size: 0.95rem;
+            }
+
+            .tomb-article-body {
+                padding: 0 1rem 1rem;
+            }
+
             .modal {
                 padding: 1.5rem;
                 border-radius: 12px;
@@ -1144,6 +1639,11 @@
             .pagination-btn.prev,
             .pagination-btn.next {
                 padding: 0 0.8rem;
+            }
+
+            .menu-panel {
+                right: 5%;
+                width: 180px;
             }
         }
 
@@ -1202,7 +1702,11 @@
                 <li role="none"><a href="#blog" role="menuitem" onclick="App.showPage('blog'); return false;" class="nav-link" data-page="blog">博客</a></li>
                 <li role="none"><a href="#about" role="menuitem" onclick="App.showPage('about'); return false;" class="nav-link" data-page="about">关于</a></li>
             </ul>
-            <a href="https://space.bilibili.com/1013459131" target="_blank" rel="noopener noreferrer" class="bilibili-btn" aria-label="访问B站空间">B站</a>
+            <button class="menu-btn" onclick="App.openMenu()" aria-label="打开菜单" aria-haspopup="true" aria-expanded="false">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
         </div>
     </nav>
 
@@ -1217,7 +1721,7 @@
                 <h1>梦语の小站</h1>
                 <p>记录学习，分享资源，探索技术</p>
                 <div class="home-links">
-                    <a href="#blog" onclick="App.showPage('blog'); return false;" class="btn btn-primary">阅读文章</a>
+                    <a href="https://space.bilibili.com/1013459131" target="_blank" rel="noopener noreferrer" class="btn btn-bilibili">B站</a>
                     <a href="#downloads" onclick="App.showPage('downloads'); return false;" class="btn">文件下载</a>
                 </div>
             </div>
@@ -1262,6 +1766,27 @@
             <article class="blog-detail" id="blogDetailContent"></article>
         </div>
 
+        <!-- 墓 -->
+        <div id="tomb" class="page" role="tabpanel" aria-label="墓">
+            <div class="tomb-intro">
+                <h1>墓</h1>
+                <p>这里安葬着那些曾照亮过我生命的人。他们或许已经离去，但记忆永存。愿逝者安息，生者珍重。</p>
+            </div>
+            <div class="tomb-list" id="tombList">
+                <div class="loading">加载中</div>
+            </div>
+            <div class="pagination" id="tombPagination"></div>
+        </div>
+
+        <!-- 墓详情 -->
+        <div id="tombDetail" class="page" role="tabpanel" aria-label="墓详情">
+            <button class="btn btn-back" onclick="App.backToTombList()" aria-label="返回墓列表">
+                <span aria-hidden="true">←</span>
+                <span>返回列表</span>
+            </button>
+            <article class="tomb-detail" id="tombDetailContent"></article>
+        </div>
+
         <!-- 关于 -->
         <div id="about" class="page" role="tabpanel" aria-label="关于我">
             <h1>关于我</h1>
@@ -1275,9 +1800,23 @@
     </main>
 
     <footer>
-        <p> 梦语の小站 · <a onclick="App.openContactModal()" role="button" tabindex="0">联系我</a> · <a href="https://space.bilibili.com/1013459131" target="_blank" rel="noopener noreferrer">B站空间</a></p>
+        <p> 梦语の小站 · <a onclick="App.openContactModal()" role="button" tabindex="0">联系我</a></p>
         <p style="margin-top: 0.5rem; font-size: 0.8rem;">使用爱与代码构建</p>
     </footer>
+
+    <!-- 菜单面板 - Windows右键菜单风格 -->
+    <div class="menu-overlay" id="menuOverlay" onclick="App.closeMenuOnOverlay(event)">
+        <div class="menu-panel">
+            <ul class="menu-list" role="menu">
+                <li class="menu-item" role="menuitem" onclick="App.menuNavigate('home')" data-menu-page="home">主页</li>
+                <li class="menu-item" role="menuitem" onclick="App.menuNavigate('resources')" data-menu-page="resources">资源导航</li>
+                <li class="menu-item" role="menuitem" onclick="App.menuNavigate('downloads')" data-menu-page="downloads">文件下载</li>
+                <li class="menu-item" role="menuitem" onclick="App.menuNavigate('blog')" data-menu-page="blog">我的博客</li>
+                <li class="menu-item" role="menuitem" onclick="App.menuNavigate('about')" data-menu-page="about">关于我</li>
+                <li class="menu-item" role="menuitem" onclick="App.menuNavigate('tomb')" data-menu-page="tomb">墓</li>
+            </ul>
+        </div>
+    </div>
 
     <!-- 联系弹窗 -->
     <div class="modal-overlay" id="contactModal" onclick="App.closeContactModalOnOverlay(event)" role="dialog" aria-modal="true" aria-label="联系方式">
@@ -1314,15 +1853,15 @@
     <div class="toast" id="copyToast" role="status" aria-live="polite"></div>
 
     <script>
-        // ==================== 配置 ====================
-        // 固定数据源地址
+        // ==================== 固定数据路径 ====================
         const DATA_URL = 'https://www.mengyu-awa.top/data.json';
 
         // ==================== 分页配置 ====================
         const PaginationConfig = {
             resources: { itemsPerPage: 6 },
             downloads: { itemsPerPage: 5 },
-            blogs: { itemsPerPage: 4 }
+            blogs: { itemsPerPage: 4 },
+            tombs: { itemsPerPage: 4 }
         };
 
         // ==================== 状态管理 ====================
@@ -1333,7 +1872,9 @@
             resourcePage: 1,
             downloadPage: 1,
             blogPage: 1,
-            data: null
+            tombPage: 1,
+            data: null,
+            currentPage: 'home'
         };
 
         // ==================== 核心功能 ====================
@@ -1341,15 +1882,17 @@
             async init() {
                 try {
                     console.log('Loading data from:', DATA_URL);
-                    
                     const response = await fetch(DATA_URL);
                     if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
                     AppState.data = await response.json();
-                    
                 } catch (error) {
                     console.error('Failed to load data:', error);
-                    this.showError('数据加载失败，请刷新页面重试');
+                    this.showError('数据加载失败，请检查网络连接后刷新页面重试');
                     return;
+                }
+
+                if (!AppState.data.tombs) {
+                    AppState.data.tombs = [];
                 }
 
                 this.renderResourceTabs();
@@ -1358,6 +1901,7 @@
                 this.renderDownloads();
                 this.renderBlogTabs();
                 this.renderBlogs();
+                this.renderTombs();
                 this.renderSkills();
                 this.setupEventListeners();
                 this.handleInitialRoute();
@@ -1368,29 +1912,35 @@
                 document.getElementById('resourceList').innerHTML = errorHtml;
                 document.getElementById('fileList').innerHTML = errorHtml;
                 document.getElementById('blogList').innerHTML = errorHtml;
+                document.getElementById('tombList').innerHTML = errorHtml;
             },
 
             setupEventListeners() {
                 window.addEventListener('popstate', () => {
                     const hash = window.location.hash.slice(1) || 'home';
-                    if (hash !== 'blogDetail' && document.getElementById(hash)) {
+                    if (hash !== 'blogDetail' && hash !== 'tombDetail' && document.getElementById(hash)) {
                         this.showPage(hash, false);
                     }
                 });
 
                 document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') this.closeContactModal();
+                    if (e.key === 'Escape') {
+                        this.closeMenu();
+                        this.closeContactModal();
+                    }
                 });
             },
 
             handleInitialRoute() {
                 const hash = window.location.hash.slice(1);
-                if (hash && hash !== 'blogDetail' && document.getElementById(hash)) {
+                if (hash && hash !== 'blogDetail' && hash !== 'tombDetail' && document.getElementById(hash)) {
                     this.showPage(hash, false);
                 }
             },
 
             showPage(pageName, updateHistory = true) {
+                AppState.currentPage = pageName;
+                
                 document.querySelectorAll('.page').forEach(p => {
                     p.classList.remove('active');
                     p.setAttribute('aria-hidden', 'true');
@@ -1409,6 +1959,11 @@
                     link.classList.toggle('active', isActive);
                     link.setAttribute('aria-current', isActive ? 'page' : 'false');
                 });
+
+                document.querySelectorAll('.menu-item').forEach(item => {
+                    const isActive = item.dataset.menuPage === pageName;
+                    item.classList.toggle('active', isActive);
+                });
                 
                 if (updateHistory) {
                     history.pushState(null, null, '#' + pageName);
@@ -1417,7 +1972,36 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
 
-            // ==================== 分页通用方法 ====================
+            openMenu() {
+                const overlay = document.getElementById('menuOverlay');
+                const btn = document.querySelector('.menu-btn');
+                overlay.classList.add('active');
+                btn.setAttribute('aria-expanded', 'true');
+                
+                document.querySelectorAll('.menu-item').forEach(item => {
+                    item.classList.toggle('active', item.dataset.menuPage === AppState.currentPage);
+                });
+            },
+
+            closeMenu() {
+                const overlay = document.getElementById('menuOverlay');
+                const btn = document.querySelector('.menu-btn');
+                overlay.classList.remove('active');
+                btn.setAttribute('aria-expanded', 'false');
+                btn.focus();
+            },
+
+            closeMenuOnOverlay(event) {
+                if (event.target === event.currentTarget) {
+                    this.closeMenu();
+                }
+            },
+
+            menuNavigate(pageName) {
+                this.closeMenu();
+                this.showPage(pageName);
+            },
+
             renderPagination(containerId, currentPage, totalPages, totalItems, onPageChange) {
                 const container = document.getElementById(containerId);
                 if (totalPages <= 1) {
@@ -1464,7 +2048,6 @@
                 container.innerHTML = html;
             },
 
-            // ==================== 联系弹窗 ====================
             openContactModal() {
                 const modal = document.getElementById('contactModal');
                 modal.classList.add('active');
@@ -1525,7 +2108,6 @@
                 }, 2000);
             },
 
-            // ==================== 资源模块（分页） ====================
             renderResourceTabs() {
                 const categories = ['全部', ...new Set(AppState.data.resources.map(r => r.category))];
                 const container = document.getElementById('resourceTabs');
@@ -1585,7 +2167,6 @@
                 this.renderResources();
             },
 
-            // ==================== 下载模块（分页） ====================
             renderDownloadTabs() {
                 const categories = ['全部', ...new Set(AppState.data.downloads.map(d => d.category))];
                 const container = document.getElementById('downloadTabs');
@@ -1666,7 +2247,6 @@
                 }, 3000);
             },
 
-            // ==================== 博客模块（分页） ====================
             renderBlogTabs() {
                 const categories = ['全部', ...new Set(AppState.data.blogs.map(b => b.category))];
                 const container = document.getElementById('blogTabs');
@@ -1762,6 +2342,107 @@
             backToBlogList() {
                 document.getElementById('blogDetail').classList.remove('active');
                 document.getElementById('blog').classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            renderTombs() {
+                const tombs = AppState.data.tombs || [];
+                const container = document.getElementById('tombList');
+                
+                if (tombs.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 3rem;">暂无归档记录</p>';
+                    document.getElementById('tombPagination').innerHTML = '';
+                    return;
+                }
+
+                const { itemsPerPage } = PaginationConfig.tombs;
+                const totalPages = Math.ceil(tombs.length / itemsPerPage);
+                AppState.tombPage = Math.min(AppState.tombPage, totalPages);
+                
+                const start = (AppState.tombPage - 1) * itemsPerPage;
+                const display = tombs.slice(start, start + itemsPerPage);
+                
+                container.innerHTML = display.map((t, i) => `
+                    <article class="tomb-item" style="animation-delay: ${i * 0.1}s" onclick="App.showTombDetail(${t.id})" role="button" tabindex="0" 
+                        aria-label="查看：${t.name}" onkeypress="if(event.key==='Enter') App.showTombDetail(${t.id})">
+                        ${t.cover ? `<img src="${t.cover}" alt="${t.name}" class="tomb-item-cover" width="120" height="80" loading="lazy" onerror="this.style.display='none'">` : ''}
+                        <div class="tomb-item-content">
+                            <div class="tomb-header">
+                                <div class="tomb-name">${t.name}</div>
+                                <span class="tomb-dates">${t.birthDate || '?'} - ${t.deathDate || '?'}</span>
+                            </div>
+                            <div class="tomb-meta">
+                                <span>${t.tags ? t.tags.join(' · ') : ''}</span>
+                            </div>
+                            <div class="tomb-excerpt">${t.excerpt || ''}</div>
+                        </div>
+                    </article>
+                `).join('');
+
+                this.renderPagination('tombPagination', AppState.tombPage, totalPages, tombs.length, 'App.goToTombPage');
+            },
+
+            goToTombPage(page) {
+                AppState.tombPage = page;
+                this.renderTombs();
+                document.getElementById('tomb').scrollIntoView({ behavior: 'smooth' });
+            },
+
+            showTombDetail(tombId) {
+                const tomb = AppState.data.tombs.find(t => t.id === tombId);
+                if (!tomb) return;
+
+                const container = document.getElementById('tombDetailContent');
+                
+                const articlesHtml = tomb.articles && tomb.articles.length > 0 
+                    ? tomb.articles.map((article) => `
+                        <details class="tomb-article">
+                            <summary class="tomb-article-summary">
+                                <span class="tomb-article-title">${article.title}</span>
+                                ${article.date ? `<span class="tomb-article-date">${article.date}</span>` : ''}
+                            </summary>
+                            <div class="tomb-article-body">
+                                ${article.content}
+                            </div>
+                        </details>
+                    `).join('')
+                    : '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">暂无追忆文章</p>';
+
+                container.innerHTML = `
+                    <header class="tomb-detail-header">
+                        ${tomb.cover ? `<img src="${tomb.cover}" alt="${tomb.name}" class="tomb-detail-cover" loading="eager" onerror="this.style.display='none'">` : ''}
+                        <h1 class="tomb-detail-name">${tomb.name}</h1>
+                        <div class="tomb-detail-meta">
+                            <span>${tomb.birthDate || '?'} - ${tomb.deathDate || '?'}</span>
+                            <span>${tomb.tags ? tomb.tags.join(' · ') : ''}</span>
+                        </div>
+                        <div class="tomb-detail-tags">
+                            ${tomb.tags ? tomb.tags.map(t => `<span class="tomb-detail-tag">${t}</span>`).join('') : ''}
+                        </div>
+                    </header>
+                    
+                    ${tomb.intro ? `
+                    <section class="tomb-detail-intro">
+                        ${tomb.intro}
+                    </section>
+                    ` : ''}
+                    
+                    <section class="tomb-articles-section">
+                        <h2 class="tomb-articles-heading">追忆文章</h2>
+                        <div class="tomb-articles">
+                            ${articlesHtml}
+                        </div>
+                    </section>
+                `;
+
+                document.getElementById('tomb').classList.remove('active');
+                document.getElementById('tombDetail').classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            },
+
+            backToTombList() {
+                document.getElementById('tombDetail').classList.remove('active');
+                document.getElementById('tomb').classList.add('active');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             },
 
